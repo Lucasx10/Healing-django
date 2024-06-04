@@ -50,9 +50,8 @@ def agendar_horario(request, id_data_aberta):
 
 login_required    
 def minhas_consultas(request):
-    if request.method == 'GET':
-        data = request.GET.data("data")
-        especialidade = request.GET.data("especialidade")
+        data = request.GET.get("data")
+        especialidade = request.GET.get("especialidade")
         minhas_consultas = Consulta.objects.filter(paciente=request.user).filter(data_aberta__data__gte=datetime.now())
 
         if data:
