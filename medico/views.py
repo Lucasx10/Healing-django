@@ -86,6 +86,7 @@ def abrir_horario(request):
         messages.add_message(request, constants.SUCCESS, 'Horário cadastrado com sucesso.')
         return redirect('/medicos/abrir_horario')
 
+@login_required
 def consultas_medico(request):
     if not is_medico(request.user):
         messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
@@ -98,6 +99,7 @@ def consultas_medico(request):
 
     return render(request, 'consultas_medico.html', {'consultas_hoje': consultas_hoje, 'consultas_restantes': consultas_restantes, 'is_medico': is_medico(request.user)})
 
+@login_required
 def consulta_area_medico(request, id_consulta):
     if not is_medico(request.user):
         messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
@@ -128,6 +130,7 @@ def consulta_area_medico(request, id_consulta):
         messages.add_message(request, constants.SUCCESS, 'Consulta inicializada com sucesso.')
         return redirect(f'/medicos/consulta_area_medico/{id_consulta}')
     
+@login_required
 def finalizar_consulta(request, id_consulta):
     if not is_medico(request.user):
         messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
@@ -143,6 +146,7 @@ def finalizar_consulta(request, id_consulta):
     consulta.save()
     return redirect(f'/medicos/consulta_area_medico/{id_consulta}')
 
+@login_required
 def add_documento(request, id_consulta):
     if not is_medico(request.user):
         messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
