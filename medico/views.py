@@ -5,6 +5,7 @@ from paciente.models import Consulta, Documento
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages import constants
+from django.db.models import Count
 
 @login_required
 def cadastro_medico(request):
@@ -172,3 +173,18 @@ def add_documento(request, id_consulta):
     documneto.save()
     messages.add_message(request, constants.SUCCESS, 'Documento adicionado com sucesso.')
     return redirect(f'/medicos/consulta_area_medico/{id_consulta}')
+
+@login_required
+def dashboard(request):
+    if not is_medico(request.user):
+        messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
+        return redirect('/usuarios/sair')
+    
+    consultas = Consulta.objects.filter(data_aberta__user=request.user)\
+    .filter(data_aberta__data__range=[datetime.now().date() - timedelta(days=7), datetime.now().date() + timedelta(days=1)])\
+    .annotate().values('data_aberta__data').annotate(quantidade=Count('id'))
+    
+    datas = [i['data_aberta__data'].strftime("%d-%m-%Y") for i in consultas]
+    quantidade = [i['quantidade'] for i in consultas]
+    
+    return render(request, 'dashboard.html', {'datas': datas, 'quantidade': quantidade})
